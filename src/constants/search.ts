@@ -1,0 +1,1 @@
+export const MAX_SEARCH_SUGGESTION_COUNT = 6;

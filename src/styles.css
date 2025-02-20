@@ -4,6 +4,8 @@
   --font-sans: "Open Sans", serif;
   --font-sanspro: "Source Sans 3", serif;
 
+  --text-xxs: 10px;
+
   --color-primary: #1c76d5;
   --color-secondary: #5b5b5b;
   --color-grey: #f0f0f0;
@@ -24,6 +26,7 @@
 :root {
   font-family: var(--font-sans);
   font-weight: var(--font-weight-normal);
+  font-size: vat(--text-base);
 }
 
 body {
