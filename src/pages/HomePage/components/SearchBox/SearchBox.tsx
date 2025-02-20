@@ -58,7 +58,7 @@ const SearchBox = () => {
   };
 
   return (
-    <div className="py-12 px-40 shadow-main">
+    <div className="py-12 px-40 shadow-main sticky top-0 bg-white">
       <form
         className={`flex items-center h-14 rounded-[9px] border-1 ${
           isFocused ? "border-primary rounded-bl-none" : "border-[#A4A4A4]"
