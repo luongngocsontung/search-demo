@@ -1,5 +1,11 @@
+import SearchBox from "./components/SearchBox";
+
 const HomePage = () => {
-  return <div>HomePage</div>;
+  return (
+    <div>
+      <SearchBox />
+    </div>
+  );
 };
 
 export default HomePage;

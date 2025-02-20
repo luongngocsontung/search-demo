@@ -11,6 +11,16 @@
   --shadow-main: 0px 4px 8px 4px #e0e4e559;
 }
 
+@layer components {
+  button {
+    @apply px-8 py-3.5 cursor-pointer hover:opacity-90 transition;
+  }
+
+  a {
+    @apply cursor-pointer;
+  }
+}
+
 :root {
   font-family: var(--font-sans);
   font-weight: var(--font-weight-normal);
