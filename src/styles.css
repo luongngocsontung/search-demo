@@ -6,27 +6,34 @@
 
   --text-xxs: 10px;
 
-  --color-primary: #1c76d5;
-  --color-secondary: #5b5b5b;
-  --color-grey: #f0f0f0;
+  --color-base: rgba(40, 40, 40, 1);
+  --color-primary: rgba(28, 118, 213, 1);
+  --color-secondary: rgba(91, 91, 91, 1);
+  --color-ghost: rgba(104, 104, 104, 1);
+  --color-grey: rgba(240, 240, 240, 1);
 
   --shadow-main: 0px 4px 8px 4px #e0e4e559;
 }
 
 @layer components {
+  h3 {
+    @apply text-[22px] font-semibold;
+  }
+
   button {
     @apply px-8 py-3.5 cursor-pointer hover:opacity-90 transition;
   }
 
   a {
-    @apply cursor-pointer;
+    @apply cursor-pointer hover:underline;
   }
 }
 
 :root {
   font-family: var(--font-sans);
   font-weight: var(--font-weight-normal);
-  font-size: vat(--text-base);
+  font-size: var(--text-base);
+  color: var(--color-base);
 }
 
 body {

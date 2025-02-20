@@ -1,15 +1,19 @@
 import { SEARCH_API_ENDPOINT, SUGGESTION_API_ENDPOINT } from "@/constants/api";
 import { MAX_SEARCH_SUGGESTION_COUNT } from "@/constants/search";
-import { SearchResult, SearchSuggestion } from "@/types/search";
-import { filterSearchSuggestions } from "@/utils/search";
+import { SearchResultResponse, SearchSuggestionResponse } from "@/types/search";
+import { filterSearchResult, filterSearchSuggestions } from "@/utils/search";
 
 export const fetchSearchResult = async (keyword: string) => {
+  if (!keyword) return { error: null, data: null };
+
   try {
     const response = await fetch(SEARCH_API_ENDPOINT);
 
-    const data: SearchResult = await response.json();
+    const data: SearchResultResponse = await response.json();
 
-    return { error: null, data };
+    const results = filterSearchResult(data, keyword);
+
+    return { error: null, data: results };
   } catch (error) {
     return { error, data: null };
   }
@@ -30,7 +34,8 @@ export const fetchSearchSuggestion = async (
   try {
     const response = await fetch(SUGGESTION_API_ENDPOINT);
 
-    const data: SearchSuggestion = await response.json();
+    const data: SearchSuggestionResponse = await response.json();
+
     const suggestions = filterSearchSuggestions(
       data.suggestions,
       keyword,

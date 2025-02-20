@@ -1,9 +1,9 @@
-interface SearchHighlight {
+export interface SearchHighlight {
   BeginOffset: number;
   EndOffset: number;
 }
 
-interface SearchResultItem {
+export interface SearchResultItem {
   DocumentId: string;
   DocumentTitle: {
     Text: string;
@@ -16,14 +16,14 @@ interface SearchResultItem {
   DocumentURI: string;
 }
 
-export interface SearchResult {
+export interface SearchResultResponse {
   TotalNumberOfResults: number;
   Page: number;
   PageSize: number;
   ResultItems: SearchResultItem[];
 }
 
-export interface SearchSuggestion {
+export interface SearchSuggestionResponse {
   stemmedQueryTerm: string;
   suggestions: string[];
 }
