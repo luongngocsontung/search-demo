@@ -1,8 +1,19 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "Open Sans", serif;
+  --font-sanspro: "Source Sans 3", serif;
+
+  --color-primary: #1c76d5;
+  --color-secondary: #5b5b5b;
+  --color-grey: #f0f0f0;
+
+  --shadow-main: 0px 4px 8px 4px #e0e4e559;
+}
+
 :root {
-  font-family: Open Sans;
-  font-weight: 400;
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-normal);
 }
 
 body {
