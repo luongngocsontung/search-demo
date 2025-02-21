@@ -10,6 +10,7 @@ This project, 'Searching Website', is a web application designed to provide sear
 - [Installation](#installation)
   - [Run the App](#run-the-app)
   - [Run Tests](#run-tests)
+- [Production URL](#production-url)
 
 # Approach
 
@@ -57,3 +58,7 @@ To install and run this project on your local machine, follow these steps:
 ```bash
 npm run test
 ```
+
+## Production URL
+
+https://search-tung.netlify.app/
