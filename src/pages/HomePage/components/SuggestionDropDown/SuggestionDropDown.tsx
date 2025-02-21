@@ -19,13 +19,11 @@ const SuggestionDropDown = ({
     handleOnSearch(keyword);
   };
 
+  if (!isOpen) return false;
+
   return (
     <ul
-      className={`absolute top-14 left-0 right-0 z-10 bg-white shadow-main transition${
-        isOpen
-          ? "opacity-100 max-h-96 py-2"
-          : "opacity-0 max-h-0 overflow-hidden py-0"
-      }`}
+      className={`absolute top-14 left-0 right-0 py-2 bg-white shadow-main transition`}
     >
       {suggestions.map((suggestion, index) => (
         <li
@@ -35,6 +33,9 @@ const SuggestionDropDown = ({
           }`}
           onMouseEnter={() => {
             setSuggestionSeletedIndex(index);
+          }}
+          onMouseLeave={() => {
+            setSuggestionSeletedIndex(-1);
           }}
           onMouseDown={(e) => handleOnSelectSuggestion(e, suggestion)}
         >
