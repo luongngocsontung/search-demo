@@ -16,6 +16,7 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
     searchParams.get("search") || ""
   );
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestionSeletedIndex, setSuggestionSeletedIndex] = useState(-1);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -30,6 +31,7 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
   const handleOnInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchValue(value);
+    getSuggestions.cancel();
 
     // Only call API when user input more than `START_SEARCHING_INPUT_LENGTH` characters
     if (value.length >= START_SEARCHING_INPUT_LENGTH) {
@@ -42,20 +44,28 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
      */
     if (searchValue.length < START_SEARCHING_INPUT_LENGTH) {
       setSuggestions([]);
+      setSuggestionSeletedIndex(-1);
     }
   };
 
-  const getSuggestions = debounce((searchInput) => {
-    fetchSearchSuggestion(searchInput).then(({ error, data }) => {
-      if (error) {
-        console.error(error);
-      } else if (data) {
-        setSuggestions(data);
-      }
-    });
-  }, 300);
+  const getSuggestions = useMemo(
+    () =>
+      debounce((searchInput) => {
+        fetchSearchSuggestion(searchInput).then(({ error, data }) => {
+          if (error) {
+            console.error(error);
+          } else if (data) {
+            setSuggestions(data);
+          }
+        });
+      }, 300),
+    []
+  );
 
   const handleSearch = (keyword: string) => {
+    // Cancel previous API call
+    getSuggestions.cancel();
+
     // Sync search value with URL
     setSearchParams({ search: keyword });
 
@@ -63,13 +73,10 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
     setIsFocused(false);
     searchInputRef.current?.blur();
 
-    onSearch(keyword);
-  };
+    // Update search value state when user perform search with suggestion
+    setSearchValue(keyword);
 
-  const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    // Prevent reload page
-    e.preventDefault();
-    handleSearch(searchValue);
+    onSearch(keyword);
   };
 
   const handleClearInput = () => {
@@ -78,23 +85,51 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
     handleSearch("");
   };
 
+  const handleOnSearch = (keyword: string) => {
+    handleSearch(keyword);
+  };
+
+  // const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.key === "Enter") {
+  //     e.preventDefault();
+  //     handleOnSearch();
+  //   }
+  //   // Only perform keyboard navigation when suggestions are displayed
+  //   if (!isSuggestionDisplayed) return;
+  //   if (e.key === "ArrowDown") {
+  //     setSuggestionSeletedIndex((prev) => {
+  //       if (prev >= suggestions.length - 1) return -1;
+  //       return prev + 1;
+  //     });
+  //   }
+  //   if (e.key === "ArrowUp") {
+  //     setSuggestionSeletedIndex((prev) => {
+  //       if (prev <= -1) return suggestions.length - 1;
+  //       return prev - 1;
+  //     });
+  //   }
+  // };
+
   return (
     <div className="py-12 px-40 shadow-main sticky top-0 bg-white">
       <form
         className={`flex items-center h-14 rounded-[9px] border-1 ${
           isFocused ? "border-primary rounded-bl-none" : "border-[#A4A4A4]"
         }`}
-        onSubmit={handleOnSubmit}
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
       >
         <div className="grow h-full flex items-center pl-6 pr-4 relative">
           <input
-            ref={searchInputRef}
+            // ref={searchInputRef}
             className="grow h-full focus:outline-0"
             value={searchValue}
             autoFocus
             onChange={handleOnInputChange}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            // onKeyDown={handleOnKeyDown}
           />
 
           <button
@@ -109,6 +144,9 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
             keyword={searchValue}
             suggestions={suggestions}
             isOpen={isSuggestionDisplayed}
+            suggestionSeletedIndex={suggestionSeletedIndex}
+            setSuggestionSeletedIndex={setSuggestionSeletedIndex}
+            handleOnSearch={handleOnSearch}
           />
         </div>
 
@@ -117,6 +155,7 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
           className={
             "bg-primary rounded-[8px] h-full text-white font-semibold flex items-center gap-1.5"
           }
+          onClick={() => handleOnSearch(searchValue)}
         >
           <Search />
           Search
