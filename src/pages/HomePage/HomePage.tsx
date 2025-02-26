@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import SearchBox from "./components/SearchBox";
-import SearchResultBox from "./components/SearchResultBox";
+import SearchBox from "@/components/SearchBox";
+import SearchResultBox from "../../components/SearchResultBox";
 import { fetchSearchResult } from "@/apis/search-apis";
 import { SearchResultResponse } from "@/types/search";
 import { useSearchParams } from "react-router-dom";
