@@ -3,12 +3,14 @@ import NavBar from "../NavBar";
 
 const AppLayout = () => {
   return (
-    <div>
+    <div className="grid grid-rows-[auto_1fr] min-h-screen">
       {/* Header */}
       <NavBar />
 
       {/* Main content */}
-      <Outlet />
+      <main>
+        <Outlet />
+      </main>
     </div>
   );
 };
