@@ -54,6 +54,8 @@ export const extractHighlightByKeyword = (
   text: string,
   keyword: string
 ): TextFormat[] => {
+  if (!keyword) return [{ text, type: "normal" }];
+
   const normalizeKeyword = keyword.trim().toLocaleLowerCase();
   const result: TextFormat[] = [];
 
