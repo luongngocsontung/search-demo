@@ -4,17 +4,16 @@ import SuggestionDropDown from "../SuggestionDropDown";
 import Close from "@/assets/svgs/close.svg?react";
 import Search from "@/assets/svgs/search.svg?react";
 import { SearchBoxProps } from "./types";
-import { useSearchParams } from "react-router-dom";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useQueryParams } from "@/hooks/useQueryParams";
+import { QueryParams } from "@/constants/param";
 
 const START_SEARCHING_INPUT_LENGTH = 2;
 
 const SearchBox = ({ onSearch }: SearchBoxProps) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useQueryParams(QueryParams.SEARCH);
   const [isFocused, setIsFocused] = useState(false);
-  const [searchValue, setSearchValue] = useState(
-    searchParams.get("search") || ""
-  );
+  const [searchValue, setSearchValue] = useState(searchParams);
   const debouncedSearchValue = useDebounce(searchValue, 300);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [suggestionSeletedIndex, setSuggestionSeletedIndex] = useState(-1);
@@ -42,7 +41,7 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
 
   const handleSearch = (keyword: string) => {
     // Sync search value with URL
-    setSearchParams({ search: keyword });
+    setSearchParams(keyword);
 
     // Unfocus search box
     setIsFocused(false);
