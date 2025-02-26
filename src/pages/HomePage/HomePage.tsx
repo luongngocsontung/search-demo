@@ -4,14 +4,17 @@ import SearchResultBox from "../../components/SearchResultBox";
 import { fetchSearchResult } from "@/apis/search-apis";
 import { SearchResultResponse } from "@/types/search";
 import { useSearchParams } from "react-router-dom";
+import Loading from "@/components/Loading";
 
 const HomePage = () => {
   const [searchParams] = useSearchParams();
   const [searchResult, setSearchResult] = useState<SearchResultResponse | null>(
     null
   );
+  const [isSearching, setIsSearching] = useState(false);
 
   const onSearch = async (keyword: string) => {
+    setIsSearching(true);
     const result = await fetchSearchResult(keyword);
     if (result.error) {
       console.error(result.error);
@@ -20,6 +23,7 @@ const HomePage = () => {
     } else {
       setSearchResult(null);
     }
+    setIsSearching(false);
   };
 
   /**
@@ -33,9 +37,15 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <SearchBox onSearch={onSearch} />
-      <SearchResultBox searchResult={searchResult} />
+      {isSearching ? (
+        <div className="flex justify-center items-center h-full">
+          <Loading />
+        </div>
+      ) : (
+        <SearchResultBox searchResult={searchResult} />
+      )}
     </div>
   );
 };
