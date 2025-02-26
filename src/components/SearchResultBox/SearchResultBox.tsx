@@ -1,4 +1,4 @@
-import SearchResult from "../SearchResult";
+import SearchResult from "./SearchResult";
 import { SearchResultBoxProps } from "./types";
 
 const SearchResultBox = ({ searchResult }: SearchResultBoxProps) => {

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { fetchSearchSuggestion } from "@/apis/search-apis";
-import SuggestionDropDown from "../SuggestionDropDown";
+import SuggestionDropDown from "./SuggestionDropDown";
 import Close from "@/assets/svgs/close.svg?react";
 import Search from "@/assets/svgs/search.svg?react";
 import { SearchBoxProps } from "./types";
@@ -16,26 +16,30 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
   const [searchValue, setSearchValue] = useState(searchParams);
   const debouncedSearchValue = useDebounce(searchValue, 300);
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [suggestionSeletedIndex, setSuggestionSeletedIndex] = useState(-1);
+  const [suggestionSelectedIndex, setSuggestionSelectedIndex] = useState(-1);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const isSuggestionDisplayed =
-    suggestions.length > 0 &&
-    isFocused &&
-    searchValue.length >= START_SEARCHING_INPUT_LENGTH;
+  const isSuggestionDisplayed = suggestions.length > 0 && isFocused;
+
+  const resetSuggestions = () => {
+    setSuggestions([]);
+    setSuggestionSelectedIndex(-1);
+  };
 
   const handleOnInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchValue(value);
 
+    // Reset suggestionsSelectedIndex
+    setSuggestionSelectedIndex(-1);
+
     /**
      * Reset suggestions when user input less than `START_SEARCHING_INPUT_LENGTH` characters
-     * This is to prevent showing old suggestions when user is typing more than 2 characters
+     * This is to prevent showing old suggestions when user is typing more than `START_SEARCHING_INPUT_LENGTH` characters
      */
-    if (searchValue.length < START_SEARCHING_INPUT_LENGTH) {
-      setSuggestions([]);
-      setSuggestionSeletedIndex(-1);
+    if (value.length < START_SEARCHING_INPUT_LENGTH) {
+      resetSuggestions();
     }
   };
 
@@ -43,8 +47,7 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
     // Sync search value with URL
     setSearchParams(keyword);
 
-    // Unfocus search box
-    setIsFocused(false);
+    // Unfocus search input
     searchInputRef.current?.blur();
 
     // Update search value state when user perform search with suggestion
@@ -55,12 +58,10 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
 
   const handleClearInput = () => {
     setSearchValue("");
-    setSuggestions([]);
-    handleSearch("");
-  };
+    resetSuggestions();
 
-  const handleOnSearch = (keyword: string) => {
-    handleSearch(keyword);
+    // focus search input
+    searchInputRef.current?.focus();
   };
 
   const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -68,12 +69,12 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
       e.preventDefault();
       // If user enter when suggestion is selected then search the selected suggestion
       if (
-        suggestionSeletedIndex >= 0 &&
-        suggestionSeletedIndex < suggestions.length
+        suggestionSelectedIndex >= 0 &&
+        suggestionSelectedIndex < suggestions.length
       ) {
-        handleOnSearch(suggestions[suggestionSeletedIndex]);
+        handleSearch(suggestions[suggestionSelectedIndex]);
       } else {
-        handleOnSearch(searchValue);
+        handleSearch(searchValue);
       }
     }
     // Only perform keyboard navigation when suggestions are displayed
@@ -81,14 +82,14 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setSuggestionSeletedIndex((prev) => {
+      setSuggestionSelectedIndex((prev) => {
         if (prev >= suggestions.length - 1) return -1;
         return prev + 1;
       });
     }
     if (e.key === "ArrowUp") {
       e.preventDefault();
-      setSuggestionSeletedIndex((prev) => {
+      setSuggestionSelectedIndex((prev) => {
         if (prev <= -1) return suggestions.length - 1;
         return prev - 1;
       });
@@ -98,7 +99,7 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
   // Reset selected index when suggestion is not displayed
   useEffect(() => {
     if (!isSuggestionDisplayed) {
-      setSuggestionSeletedIndex(-1);
+      setSuggestionSelectedIndex(-1);
     }
   }, [isSuggestionDisplayed]);
 
@@ -150,18 +151,18 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
             keyword={searchValue}
             suggestions={suggestions}
             isOpen={isSuggestionDisplayed}
-            suggestionSeletedIndex={suggestionSeletedIndex}
-            setSuggestionSeletedIndex={setSuggestionSeletedIndex}
-            handleOnSearch={handleOnSearch}
+            suggestionSeletedIndex={suggestionSelectedIndex}
+            setSuggestionSeletedIndex={setSuggestionSelectedIndex}
+            handleOnSearch={handleSearch}
           />
         </div>
 
         <button
-          type="submit"
+          type="button"
           className={
             "bg-primary rounded-[8px] h-full text-white font-semibold flex items-center gap-1.5"
           }
-          onClick={() => handleOnSearch(searchValue)}
+          onClick={() => handleSearch(searchValue)}
         >
           <Search />
           Search
