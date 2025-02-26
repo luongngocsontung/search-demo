@@ -141,7 +141,7 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
 
           <button
             type="button"
-            className={`p-0 ${searchValue.length >= 2 ? "block" : "hidden"}`}
+            className={`p-0 ${!!searchValue.length ? "block" : "hidden"}`}
             onClick={handleClearInput}
           >
             <Close />
