@@ -14,13 +14,16 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
   const [searchParams, setSearchParams] = useQueryParams(QueryParams.SEARCH);
   const [isFocused, setIsFocused] = useState(false);
   const [searchValue, setSearchValue] = useState(searchParams);
-  const debouncedSearchValue = useDebounce(searchValue, 300);
+  const [isFetchingSuggestion, setIsFetchingSuggestion] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [suggestionSelectedIndex, setSuggestionSelectedIndex] = useState(-1);
 
+  const debouncedSearchValue = useDebounce(searchValue, 300);
+
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const isSuggestionDisplayed = suggestions.length > 0 && isFocused;
+  const isSuggestionDisplayed =
+    isFocused && (suggestions.length > 0 || isFetchingSuggestion);
 
   const resetSuggestions = () => {
     setSuggestions([]);
@@ -107,15 +110,20 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
     // Only call API when user input more than `START_SEARCHING_INPUT_LENGTH` characters
     if (debouncedSearchValue.length < START_SEARCHING_INPUT_LENGTH) return;
 
-    fetchSearchSuggestion(debouncedSearchValue).then(({ error, data }) => {
+    const getSearchSuggestions = async () => {
+      setIsFetchingSuggestion(true);
+      const { error, data } = await fetchSearchSuggestion(searchValue);
       if (error) {
         console.error(error);
       }
       if (data) {
         setSuggestions(data);
       }
-    });
-  }, [debouncedSearchValue]);
+      setIsFetchingSuggestion(false);
+    };
+
+    getSearchSuggestions();
+  }, [debouncedSearchValue, setSuggestions, setIsFetchingSuggestion]);
 
   return (
     <div className="py-12 px-40 shadow-main sticky top-0 bg-white">
@@ -154,6 +162,7 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
             suggestionSeletedIndex={suggestionSelectedIndex}
             setSuggestionSeletedIndex={setSuggestionSelectedIndex}
             handleOnSearch={handleSearch}
+            isLoading={isFetchingSuggestion}
           />
         </div>
 

@@ -5,4 +5,5 @@ export interface SuggestionDropDownProps {
   suggestionSeletedIndex: number;
   setSuggestionSeletedIndex: (index: number) => void;
   handleOnSearch: (keyword: string) => void;
+  isLoading?: boolean;
 }

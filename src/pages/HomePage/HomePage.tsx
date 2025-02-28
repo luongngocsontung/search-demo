@@ -4,7 +4,7 @@ import SearchResultBox from "../../components/SearchResultBox";
 import { fetchSearchResult } from "@/apis/search-apis";
 import { SearchResultResponse } from "@/types/search";
 import { useSearchParams } from "react-router-dom";
-import Loading from "@/components/Loading";
+import Spinner from "@/components/Spinner";
 
 const HomePage = () => {
   const [searchParams] = useSearchParams();
@@ -41,7 +41,7 @@ const HomePage = () => {
       <SearchBox onSearch={onSearch} />
       {isSearching ? (
         <div className="flex justify-center items-center h-full">
-          <Loading />
+          <Spinner />
         </div>
       ) : (
         <SearchResultBox searchResult={searchResult} />
