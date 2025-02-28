@@ -1,4 +1,45 @@
-import { SearchResultResponse } from "@/types/search";
+import { SearchHighlight, SearchResultResponse } from "@/types/search";
+
+/**
+ * Finds all occurrences of the keyword in the given text and returns an array
+ * of SearchHighlight objects that represent the start and end indices of the
+ * keyword in the text.
+ *
+ * @param text The text to search for the keyword
+ * @param keyword The keyword to search for
+ * @returns An array of SearchHighlight objects representing the occurrence of
+ * the keyword in the text
+ */
+export const findKeywordIndexsInText = (
+  text: string,
+  keyword: string
+): SearchHighlight[] => {
+  const normalizedText = text.toLowerCase();
+  // Split keyword by space and normalize to lowercase
+  const normalizedKeywords = keyword
+    .trim()
+    .split(" ")
+    .filter((k) => !!k)
+    .map((k) => k.toLowerCase());
+
+  const result: SearchHighlight[] = [];
+
+  // Find keywords in text
+  for (const keyword of normalizedKeywords) {
+    let startIndex = 0;
+    // Find all occurrences of the keyword
+    while (normalizedText.indexOf(keyword, startIndex) !== -1) {
+      const index = normalizedText.indexOf(keyword, startIndex);
+      result.push({ BeginOffset: index, EndOffset: index + keyword.length });
+      startIndex = index + keyword.length;
+    }
+  }
+
+  // Sort by BeginOffset
+  result.sort((a, b) => a.BeginOffset - b.BeginOffset);
+
+  return result;
+};
 
 /**
  * Filters the search result items by checking if the document title includes the specified keyword.
@@ -8,7 +49,6 @@ import { SearchResultResponse } from "@/types/search";
  * @param keyword The keyword used to filter the document titles.
  * @returns The filtered search result response with items that match the keyword.
  */
-
 export const filterSearchResult = (
   result: SearchResultResponse,
   keyword: string
@@ -17,17 +57,25 @@ export const filterSearchResult = (
 
   filteredResult.ResultItems = filteredResult.ResultItems.filter(
     (resultItem) => {
-      const idDocumentExcerptHasKeyword =
-        resultItem.DocumentExcerpt.Text.toLowerCase().includes(
-          keyword.toLowerCase()
-        );
+      const highlightedKeywordsInDocumentTitle: SearchHighlight[] =
+        findKeywordIndexsInText(resultItem.DocumentTitle.Text, keyword);
 
-      const isDocumentTitleHasKeyword =
-        resultItem.DocumentTitle.Text.toLowerCase().includes(
-          keyword.toLowerCase()
-        );
+      const highlightedKeywordsInDocumentExcerpt: SearchHighlight[] =
+        findKeywordIndexsInText(resultItem.DocumentExcerpt.Text, keyword);
 
-      return idDocumentExcerptHasKeyword || isDocumentTitleHasKeyword;
+      // Return false if both document title and document excerpt don't contain the keyword
+      if (
+        !highlightedKeywordsInDocumentTitle.length &&
+        !highlightedKeywordsInDocumentExcerpt.length
+      ) {
+        return false;
+      }
+
+      resultItem.DocumentTitle.Highlights = highlightedKeywordsInDocumentTitle;
+      resultItem.DocumentExcerpt.Highlights =
+        highlightedKeywordsInDocumentExcerpt;
+
+      return true;
     }
   );
 

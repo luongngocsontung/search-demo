@@ -11,6 +11,11 @@ export const fetchSearchResult = async (keyword: string) => {
 
     const data: SearchResultResponse = await response.json();
 
+    /**
+     * Since API is static, we need to mock filtering to only items that contain the keyword.
+     * This function also manipulates the data to include highlighted words
+     * This is for demo purposes.
+     */
     const results = filterSearchResult(data, keyword);
 
     return { error: null, data: results };
@@ -36,6 +41,10 @@ export const fetchSearchSuggestion = async (
 
     const data: SearchSuggestionResponse = await response.json();
 
+    /**
+     * Since API is static, we need to mock filtering to only suggestions that contain the keyword.
+     * This is for demo purposes.
+     */
     const suggestions = filterSearchSuggestions(
       data.suggestions,
       keyword,
