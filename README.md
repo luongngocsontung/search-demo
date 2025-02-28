@@ -68,12 +68,12 @@ https://search-tung.netlify.app/
 
 - Search for a specific term in the search bar
 
-  ![image](https://github.com/luongngocsontung/search-demo/blob/master/src/assets/images/initial-page.png?raw=true)
+  ![image](src/assets/images/initial-page.png)
 
 - Show search suggestions when typing in the search bar
 
-  ![image](https://github.com/luongngocsontung/search-demo/blob/master/src/assets/images/suggestion-dropdown.png?raw=true)
+  ![image](src/assets/images/suggestion-dropdown.png)
 
 - Show search results after hitting enter or clicking the search button
 
-  ![image](https://github.com/luongngocsontung/search-demo/blob/master/src/assets/images/search-results.png?raw=true)
+  ![image](src/assets/images/search-results.png)
