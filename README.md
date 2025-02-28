@@ -11,6 +11,7 @@ This project, 'Searching Website', is a web application designed to provide sear
   - [Run the App](#run-the-app)
   - [Run Tests](#run-tests)
 - [Production URL](#production-url)
+- [Usecases](#usecases)
 
 # Approach
 
@@ -62,3 +63,17 @@ npm run test
 ## Production URL
 
 https://search-tung.netlify.app/
+
+## Usecases
+
+- Search for a specific term in the search bar
+
+  ![image](https://github.com/luongngocsontung/search-demo/blob/master/src/assets/images/initial-page.png?raw=true)
+
+- Show search suggestions when typing in the search bar
+
+  ![image](https://github.com/luongngocsontung/search-demo/blob/master/src/assets/images/suggestion-dropdown.png?raw=true)
+
+- Show search results after hitting enter or clicking the search button
+
+  ![image](https://github.com/luongngocsontung/search-demo/blob/master/src/assets/images/search-results.png?raw=true)
