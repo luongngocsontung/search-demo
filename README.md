@@ -56,9 +56,21 @@ To install and run this project on your local machine, follow these steps:
 
 ## Run Tests
 
+- To run tests
+
 ```bash
 npm run test
 ```
+
+- To run test coverage
+
+```bash
+npm run test:cov
+```
+
+- Test coverage report
+
+![image](src/assets/images/test-coverage.png)
 
 ## Production URL
 
