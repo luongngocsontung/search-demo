@@ -12,4 +12,13 @@ module.exports = {
     "^@/(.*)": "<rootDir>/src/$1",
   },
   collectCoverageFrom: ["src/**/*.{ts,tsx}"],
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "index.ts",
+    "src/constants",
+    "vite-env.d.ts",
+    "src/main.tsx",
+    "src/routes.tsx",
+    "src/App.tsx",
+  ],
 };

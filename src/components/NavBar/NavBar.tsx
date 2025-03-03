@@ -7,7 +7,7 @@ const NavBar = () => {
       <div className="flex items-center gap-2 pl-40 bg-grey h-6">
         <Logo />
         <p className="font-sanspro text-secondary text-xxs">
-          <span>{NAVBAR_TITLE_1}</span>
+          <span>{NAVBAR_TITLE_1}</span>{" "}
           <span className="font-semibold">{NAVBAR_TITLE_2}</span>
         </p>
       </div>

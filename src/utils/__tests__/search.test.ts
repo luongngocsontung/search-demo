@@ -1,3 +1,4 @@
+import { Mock } from "vitest";
 import { SearchResultResponse } from "@/types/search";
 import { filterSearchResult, findKeywordIndexsInText } from "../search";
 import * as searchUtils from "../search"; // Import the module
@@ -69,16 +70,15 @@ describe("filterSearchResult", () => {
   });
 
   beforeEach(() => {
-    jest.resetAllMocks(); // Reset mocks before each test
-    jest
-      .spyOn(searchUtils, "findKeywordIndexsInText")
-      .mockImplementation((text) =>
+    vi.resetAllMocks(); // Reset mocks before each test
+    vi.spyOn(searchUtils, "findKeywordIndexsInText").mockImplementation(
+      (text) =>
         text.includes("Test") ? [{ BeginOffset: 0, EndOffset: 4 }] : []
-      );
+    );
   });
 
   test("filters results based on keyword in title", () => {
-    (findKeywordIndexsInText as jest.Mock).mockImplementation((text) =>
+    (findKeywordIndexsInText as Mock).mockImplementation((text) =>
       text.includes("title") ? [{ BeginOffset: 0, EndOffset: 4 }] : []
     );
 
@@ -91,7 +91,7 @@ describe("filterSearchResult", () => {
           DocumentId: "1",
           DocumentTitle: {
             Text: "Test title 1",
-            Highlights: [{ BeginOffset: 0, EndOffset: 4 }],
+            Highlights: [{ BeginOffset: 5, EndOffset: 10 }],
           },
           DocumentExcerpt: {
             Text: "Test excerpt 1",
@@ -104,7 +104,7 @@ describe("filterSearchResult", () => {
   });
 
   test("filters results based on keyword in excerpt", () => {
-    (findKeywordIndexsInText as jest.Mock).mockImplementation((text) =>
+    (findKeywordIndexsInText as Mock).mockImplementation((text) =>
       text.includes("excerpt 1") ? [{ BeginOffset: 5, EndOffset: 12 }] : []
     );
 
@@ -117,20 +117,40 @@ describe("filterSearchResult", () => {
           DocumentId: "1",
           DocumentTitle: {
             Text: "Test title 1",
-            Highlights: [],
+            Highlights: [{ BeginOffset: 11, EndOffset: 12 }],
           },
           DocumentExcerpt: {
             Text: "Test excerpt 1",
-            Highlights: [{ BeginOffset: 5, EndOffset: 12 }],
+            Highlights: [
+              { BeginOffset: 5, EndOffset: 12 },
+              { BeginOffset: 13, EndOffset: 14 },
+            ],
           },
           DocumentURI: "https://example.com/1",
+        },
+        {
+          DocumentExcerpt: {
+            Highlights: [
+              {
+                BeginOffset: 8,
+                EndOffset: 15,
+              },
+            ],
+            Text: "Another excerpt",
+          },
+          DocumentId: "2",
+          DocumentTitle: {
+            Highlights: [],
+            Text: "No match here",
+          },
+          DocumentURI: "https://example.com/2",
         },
       ],
     });
   });
 
   test("returns null if no matches are found", () => {
-    (findKeywordIndexsInText as jest.Mock).mockReturnValue([]);
+    (findKeywordIndexsInText as Mock).mockReturnValue([]);
 
     const result = filterSearchResult(mockResult, "Nonexistent");
 
@@ -138,7 +158,7 @@ describe("filterSearchResult", () => {
   });
 
   test("filters multiple items correctly", () => {
-    (findKeywordIndexsInText as jest.Mock).mockImplementation((text) =>
+    (findKeywordIndexsInText as Mock).mockImplementation((text) =>
       text.includes("excerpt") ? [{ BeginOffset: 0, EndOffset: 4 }] : []
     );
 
@@ -155,7 +175,7 @@ describe("filterSearchResult", () => {
           },
           DocumentExcerpt: {
             Text: "Test excerpt 1",
-            Highlights: [{ BeginOffset: 0, EndOffset: 4 }],
+            Highlights: [{ BeginOffset: 5, EndOffset: 12 }],
           },
           DocumentURI: "https://example.com/1",
         },
@@ -164,7 +184,7 @@ describe("filterSearchResult", () => {
           DocumentTitle: { Text: "No match here", Highlights: [] },
           DocumentExcerpt: {
             Text: "Another excerpt",
-            Highlights: [{ BeginOffset: 0, EndOffset: 4 }],
+            Highlights: [{ BeginOffset: 8, EndOffset: 15 }],
           },
           DocumentURI: "https://example.com/2",
         },
